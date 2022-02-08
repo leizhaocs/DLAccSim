@@ -1,0 +1,26 @@
+ 0 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 0 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ 0 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ 0 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ 1 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ 1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ 1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+
+Only the first 12 lines matters to configure the accelerator, all the content afterwards will be treated as comments.
+
+This is an example to show how the psum NOC are configured.
+
+The corresponding example input and filter data are defined in data.txt.
+The input has a dimension of (N,C,H,W)=(4,4,10,10).
+The filter has a dimemsion of (M,C,R,S) = (4,4,2,2).
+
+The first number before the = sign of each line is called the row ID.
+The numbers after the = sign is called the column IDs.
+We call the PEs that has the same row ID as a group.
+So the first group contains the first 4 rows, and the second group contains the second 4 rows.
+Within each group, only the PEs in the up-most row have non -1 column IDs, indicating these PEs will output data to global buffer.

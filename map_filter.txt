@@ -1,0 +1,33 @@
+ 0 =  0  0  0  0  0  0  0  0  0 -1 -1 -1 -1 -1
+ 0 =  1  1  1  1  1  1  1  1  1 -1 -1 -1 -1 -1
+ 1 =  0  0  0  0  0  0  0  0  0 -1 -1 -1 -1 -1
+ 1 =  1  1  1  1  1  1  1  1  1 -1 -1 -1 -1 -1
+ 2 =  0  0  0  0  0  0  0  0  0 -1 -1 -1 -1 -1
+ 2 =  1  1  1  1  1  1  1  1  1 -1 -1 -1 -1 -1
+ 3 =  0  0  0  0  0  0  0  0  0 -1 -1 -1 -1 -1
+ 3 =  1  1  1  1  1  1  1  1  1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+
+Only the first 12 lines matters to configure the accelerator, all the content afterwards will be treated as comments.
+
+This is an example to show how the filter NOC are configured.
+
+The corresponding example input and filter data are defined in data.txt.
+The input has a dimension of (N,C,H,W)=(4,4,10,10).
+The filter has a dimemsion of (M,C,R,S) = (4,4,2,2).
+
+The first number before the = sign of each line is called the row ID.
+The numbers after the = sign is called the column IDs.
+The PEs with the same row ID and column ID will receive the same filter data at any time.
+Each different column ID actually indicates a different row in the filter.
+Each different row ID actually indicates a different channel and filter.
+The column ID is easy to understand, what needs more explanation is the row ID.
+Each different row ID is determined by the combination of channel and filter.
+For example, because each PE is configured to store data from 2 different channels and 2 different filters,
+row ID 0 indicates this row of PEs will store the first 2 channels (C=0,1) of the the first 2 filters (M=0,1).
+row ID 1 indicates this row of PEs will store the second 2 channels (C=2,3) of the the first 2 filters (M=0,1).
+row ID 2 indicates this row of PEs will store the first 2 channels (C=0,1) of the the second 2 filters (M=2,3).
+row ID 3 indicates this row of PEs will store the second 2 channels (C=2,3) of the the second 2 filters (M=2,3).

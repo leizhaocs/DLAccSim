@@ -1,0 +1,36 @@
+ 0 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 0 =  1  2  3  4  5  6  7  8  9 -1 -1 -1 -1 -1
+ 1 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 1 =  1  2  3  4  5  6  7  8  9 -1 -1 -1 -1 -1
+ 0 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 0 =  1  2  3  4  5  6  7  8  9 -1 -1 -1 -1 -1
+ 1 =  0  1  2  3  4  5  6  7  8 -1 -1 -1 -1 -1
+ 1 =  1  2  3  4  5  6  7  8  9 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+-1 = -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+
+Only the first 12 lines matters to configure the accelerator, all the content afterwards will be treated as comments.
+
+This is an example to show how the ifmap NOC are configured.
+
+The corresponding example input and filter data are defined in data.txt.
+The input has a dimension of (N,C,H,W)=(4,4,10,10).
+The filter has a dimemsion of (M,C,R,S) = (4,4,2,2).
+
+The first number before the = sign of each line is called the row ID.
+The numbers after the = sign is called the column IDs.
+The PEs with the same row ID and column ID will receive the same input data at any time.
+Each different column ID actually indicates a different row in the input.
+Each different row ID actually indicates a different channel in the input.
+From the above example we can see that rows 5-6 are a replicate of rows 1-4.
+We call each 4 rows in the above example as a group.
+These two groups will store exactly the same input data (N=0,1 because the PE is configure to store 2 inputs).
+Note in this example only the first 2 inputs are processed.
+The reason why we need two groups for the same input data is because their filter data are different.
+After understand map_filter.txt, this may be more clear.
+So, next we only focus on one group.
+Each PE can store 2 channels data (configured in the code), so each group only has 2 different row IDs.
+For example, the PEs with row ID equals 0 will store the first 2 channels (C=0,1), and the PEs with row ID equals 1 will store the next 2 channels (C=2,4).
+Because the filter height is 2 (R=2), so within a group there are 2 rows have the same row ID.
