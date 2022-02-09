@@ -71,6 +71,14 @@
  *
  * -----------------------------------------------------------
  *
+ * OP_DUMMY
+ * | 4 bits | 28 bits |
+ * | opcode |    0    |
+ *
+ * up <psum_read_addr>
+ *
+ * -----------------------------------------------------------
+ *
  * OP_UP
  * | 4 bits | 28 bits |
  * | opcode |    0    |
@@ -90,7 +98,8 @@
 #define OP_PE_LD_PSUM     0x7
 #define OP_PE_ST_PSUM     0x8
 #define OP_PE_COMPUTE     0x9
-#define OP_UP             0xA
+#define OP_DUMMY          0xA
+#define OP_UP             0xB
 
 /* a decoded instruction */
 typedef struct Instruction

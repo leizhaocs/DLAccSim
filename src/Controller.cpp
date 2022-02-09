@@ -593,17 +593,15 @@ bool Controller::read_instruction()
         inst.filter_write_en_ = 0;
         inst.filter_write_addr_ = -1;
 
-        token = strtok(NULL, " ");
-        inst.psum_read_en_ = 1;
-        inst.psum_read_addr_ = atoi(token);
-        assert(inst.psum_read_addr_ < PE_PSUM_SPAD_ENTRIES);
+        inst.psum_read_en_ = 0;
+        inst.psum_read_addr_ = -1;
 
         inst.psum_write_en_ = 0;
         inst.psum_write_addr_ = -1;
 
-        inst.add_mux_ = 1;
-        inst.psum_read_mux_ = 1;
-        inst.send_psum_out_ = 1;
+        inst.add_mux_ = 0;
+        inst.psum_read_mux_ = 0;
+        inst.send_psum_out_ = 2;
     }
     instQueue_->push(&inst);
 

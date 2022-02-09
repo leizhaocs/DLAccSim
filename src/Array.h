@@ -43,17 +43,14 @@ public:
     /* issue a new compute instruction to all active PEs */
     void issue_compute(Instruction *inst);
 
-    /* check if all destination PEs are ready to send data to adjacent PE above it */
-    bool issue_up_ready();
-
-    /* send data to adjacent PE above it */
-    void issue_up();
-
     /* print the IDs of MCs for debug */
     void debug_print_noc(NOC_TYPE noc_type);
 
     /* print the active PEs for debug */
     void debug_print_active();
+
+    /* print the top of set PEs for debug */
+    void debug_print_top_of_set();
 
     /* print the bottom of set PEs for debug */
     void debug_print_bottom_of_set();

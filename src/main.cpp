@@ -33,6 +33,9 @@ int main(int argc, char **argv)
     cout << "ACTIVE" <<endl;
     chip->get_array()->debug_print_active();
     cout << "==================================" <<endl;
+    cout << "TOP OF SET" <<endl;
+    chip->get_array()->debug_print_top_of_set();
+    cout << "==================================" <<endl;
     cout << "BOTTOM OF SET" <<endl;
     chip->get_array()->debug_print_bottom_of_set();
 

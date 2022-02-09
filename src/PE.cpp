@@ -1,12 +1,15 @@
 #include "includes.h"
 
 /* constructor */
-PE::PE(int row, int col)
+PE::PE(int row, int col, PE *above_pe)
 {
     row_ = row;
     col_ = col;
 
+    above_pe_ = above_pe;
+
     active_ = false;
+    is_top_of_set_ = false;
     is_bottom_of_set_ = false;
 
     instQueue_ = new InstQueue(PE_INST_Q_SIZE);
@@ -98,6 +101,18 @@ void PE::set_active(bool active)
     active_ = active;
 }
 
+/* get is_top_of_set_ */
+bool PE::get_is_top_of_set()
+{
+    return is_top_of_set_;
+}
+
+/* set is_top_of_set_ */
+void PE::set_is_top_of_set(bool is_top_of_set)
+{
+    is_top_of_set_ = is_top_of_set;
+}
+
 /* get is_bottom_of_set_ */
 bool PE::get_is_bottom_of_set()
 {
@@ -132,6 +147,12 @@ FIFO *PE::psum_fifo_in()
 FIFO *PE::psum_fifo_out()
 {
     return psum_fifo_out_;
+}
+
+/* check if this PE is ready to accept data from below PE */
+bool PE::can_accept_from_below()
+{
+    return false; // FIXME: check no pe.ld.psum in instQueue before up
 }
 
 /* issue an instruction from the instruction queue */
@@ -179,15 +200,33 @@ void PE::issue_inst()
 /* run one clock */
 void PE::tick()
 {
+    if (active_ == false)
+    {
+        return;
+    }
+
     // stage 4: write result
 
-    if (send_psum_out_4_)
+    if (send_psum_out_4_ == 1)
     {
         if (psum_fifo_out_->full())
         {
             return;
         }
         psum_fifo_out_->push(packet_add_);
+    }
+    else if (send_psum_out_4_ == 2)
+    {
+        if (psum_fifo_out_->empty())
+        {
+            return;
+        }
+        if (above_pe_->can_accept_from_below() == false)
+        {
+            return;
+        }
+        above_pe_->psum_fifo_in()->push(psum_fifo_out_->front());
+        psum_fifo_out_->pop();
     }
     if (psum_write_en_4_)
     {

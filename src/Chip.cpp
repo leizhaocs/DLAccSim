@@ -105,22 +105,49 @@ void Chip::configure_pes()
             prev_row_id = array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id();
         }
 
+        bool top_of_set = false;
         bool bottom_of_set = false;
-        if (array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id() == -1)
+        if (array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id() != -1)
         {
-            bottom_of_set = false;
+            if (i == 0)
+            {
+                top_of_set = true;
+            }
+            else if (array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id() != array_->get_row_MC(NOC_TYPE_PSUM_OUT, i-1)->get_id())
+            {
+                top_of_set = true;
+            }
+
+            if (i == ARRAY_ROWS-1)
+            {
+                bottom_of_set = true;
+            }
+            else if (array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id() != array_->get_row_MC(NOC_TYPE_PSUM_OUT, i+1)->get_id())
+            {
+                bottom_of_set = true;
+            }
         }
-        else if (i == ARRAY_ROWS-1)
+
+        if (top_of_set == true)
         {
-            bottom_of_set = true;
-        }
-        else if (array_->get_row_MC(NOC_TYPE_PSUM_OUT, i)->get_id() != array_->get_row_MC(NOC_TYPE_PSUM_OUT, i+1)->get_id())
-        {
-            bottom_of_set = true;
+            for (int j = 0; j < ARRAY_COLUMNS; j++)
+            {
+                if (j < set_width)
+                {
+                    array_->get_PE(i, j)->set_is_top_of_set(true);
+                }
+                else
+                {
+                    array_->get_PE(i, j)->set_is_top_of_set(false);
+                }
+            }
         }
         else
         {
-            bottom_of_set = false;
+            for (int j = 0; j < ARRAY_COLUMNS; j++)
+            {
+                array_->get_PE(i, j)->set_is_top_of_set(false);
+            }
         }
 
         if (bottom_of_set == true)

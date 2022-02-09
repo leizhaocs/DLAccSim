@@ -164,14 +164,12 @@ for nn in range(0, n):
                     psum_addr = psum_addr + 1
                     pe_mult_s(f, ifmap_read_addr, filter_read_addr, psum_addr)
                 elif (qq == q-1) and (SS == S-1):
-                    pe_mult_so(f, ifmap_read_addr, filter_read_addr, psum_addr)
+                    pe_madd_so(f, ifmap_read_addr, filter_read_addr, psum_addr, psum_addr)
                 else:
                     pe_madd_s(f, ifmap_read_addr, filter_read_addr, psum_addr, psum_addr)
-                    
-                print(str(ifmap_read_addr)+" "+str(filter_read_addr)+" "+str(psum_addr))
 
-                #pe_mult_s(f, ifmap_read_addr, filter_read_addr, psum_write_addr):
-
+#
+  
 up(f)
 
 # some nop at the end to empty pipeline

@@ -8,7 +8,8 @@ Array::Array()
         pes_.push_back(vector<PE *>());
         for (int j = 0; j < ARRAY_COLUMNS; j++)
         {
-            pes_[i].push_back(new PE(i, j));
+            PE *above_pe = i > 0 ? pes_[i-1][j] : NULL;
+            pes_[i].push_back(new PE(i, j, above_pe));
         }
     }
 
@@ -259,55 +260,6 @@ void Array::issue_compute(Instruction *inst)
     }
 }
 
-/* check if all destination PEs are ready to send data to adjacent PE above it */
-bool Array::issue_up_ready()
-{
-    for (int i = 0; i < ARRAY_ROWS; i++)
-    {
-        for (int j = 0; j < ARRAY_COLUMNS; j++)
-        {
-            if (pes_[i][j]->get_active())
-            {
-                if (pes_[i][j]->get_is_bottom_of_set())
-                {
-                    if (pes_[i][j]->psum_fifo_out()->empty())
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (pes_[i][j]->psum_fifo_in()->full())
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-    return true;
-}
-
-/* send data to adjacent PE above it */
-void Array::issue_up()
-{
-    for (int i = 0; i < ARRAY_ROWS; i++)
-    {
-        for (int j = 0; j < ARRAY_COLUMNS; j++)
-        {
-            if (pes_[i][j]->get_active())
-            {
-                if (pes_[i][j]->get_is_bottom_of_set() == false)
-                {
-                    Packet *p = pes_[i+1][j]->psum_fifo_in()->front();
-                    pes_[i][j]->psum_fifo_in()->push(p);
-                    pes_[i+1][j]->psum_fifo_out()->pop();
-                }
-            }
-        }
-    }
-}
-
 /* print the IDs of MCs for debug */
 void Array::debug_print_noc(NOC_TYPE noc_type)
 {
@@ -369,6 +321,19 @@ void Array::debug_print_active()
         for (int j = 0; j < ARRAY_COLUMNS; j++)
         {
             cout  << pes_[i][j]->get_active() << " ";
+        }
+        cout << endl;
+    }
+}
+
+/* print the top of set PEs for debug */
+void Array::debug_print_top_of_set()
+{
+    for (int i = 0; i < ARRAY_ROWS; i++)
+    {
+        for (int j = 0; j < ARRAY_COLUMNS; j++)
+        {
+            cout  << pes_[i][j]->get_is_top_of_set() << " ";
         }
         cout << endl;
     }

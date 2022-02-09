@@ -8,7 +8,7 @@ class PE
 {
 public:
     /* constructor */
-    PE(int row, int col);
+    PE(int row, int col, PE *above_pe);
 
     /* destructor */
     ~PE();
@@ -18,6 +18,12 @@ public:
 
     /* set active */
     void set_active(bool active);
+
+    /* get is_top_of_set_ */
+    bool get_is_top_of_set();
+
+    /* set is_top_of_set_ */
+    void set_is_top_of_set(bool is_top_of_set);
 
     /* get is_bottom_of_set_ */
     bool get_is_bottom_of_set();
@@ -33,6 +39,9 @@ public:
     FIFO *filter_fifo_in();
     FIFO *psum_fifo_in();
     FIFO *psum_fifo_out();
+
+    /* check if this PE is ready to accept data from below PE */
+    bool can_accept_from_below();
 
     /* issue an instruction from the instruction queue */
     void issue_inst();
@@ -50,7 +59,10 @@ private:
     int row_;                        // the row of this PE in the array, this is the physcial position, not the same as NOC's reconfigurable row ID
     int col_;                        // the column of this PE in the array, this is the physcial position, not the same as NOC's reconfigurable column ID
 
+    PE *above_pe_;                   // the above PE that will accept data from this PE for accumulation
+
     bool active_;                    // whether if this PE is activate
+    bool is_top_of_set_;             // whether if this PE is in the first row of a set
     bool is_bottom_of_set_;          // whether if this PE is in the last row of a set
 
     InstQueue *instQueue_;           // the instruction queue
@@ -98,10 +110,10 @@ private:
     int add_mux_3_;                  // select between multiplication result and psum input from adjacent PE
     int psum_read_mux_1_;            // select between data read from psum scratchpad and 0
     int psum_read_mux_2_;            // select between data read from psum scratchpad and 0
-    int send_psum_out_1_;            // send psum to psum out FIFO
-    int send_psum_out_2_;            // send psum to psum out FIFO
-    int send_psum_out_3_;            // send psum to psum out FIFO
-    int send_psum_out_4_;            // send psum to psum out FIFO
+    int send_psum_out_1_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
+    int send_psum_out_2_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
+    int send_psum_out_3_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
+    int send_psum_out_4_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
 };
 
 #endif
