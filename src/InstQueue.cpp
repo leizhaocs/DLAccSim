@@ -70,3 +70,26 @@ bool InstQueue::empty()
 {
     return (size_ == 0);
 }
+
+/* initialize the traverse */
+void InstQueue::traverse_init()
+{
+    curr_ = front_;
+}
+
+/* get the next instruction in the queue druing traverse */
+Instruction *InstQueue::traverse_next()
+{
+    if (curr_ == end_)
+    {
+        return NULL;
+    }
+
+    Instruction *inst = queue_[curr_];
+    curr_++; 
+    if (curr_ == num_entries_)
+    {
+        curr_ = 0;
+    }
+    return inst;
+}

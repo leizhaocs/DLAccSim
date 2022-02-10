@@ -27,6 +27,7 @@ public:
     bool issue_pe_ld(GB *gb, Array *array);
     bool issue_pe_st(Array *array);
     bool issue_pe_compute(Array *array);
+    bool issue_pe_acc(Array *array);
     bool issue_up(Array *array);
 
 private:

@@ -51,10 +51,10 @@ public:
     void multicast(Packet *p, int row_id, int col_id);
 
     /* check if all destination PEs are ready to accept new instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-    bool issue_ready(int row_id, int col_id);
+    bool issue_to_some_pes_ready(int row_id, int col_id);
 
     /* issue an instruction to destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-    void issue(Instruction *inst, int row_id, int col_id);
+    void issue_to_some_pes(Instruction *inst, int row_id, int col_id);
 
 private:
     NOC_TYPE noc_type_;     // type of NOC

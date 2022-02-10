@@ -143,7 +143,7 @@ void MC::multicast(Packet *p, int row_id, int col_id)
 }
 
 /* check if all destination PEs are ready to accept new instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-bool MC::issue_ready(int row_id, int col_id)
+bool MC::issue_to_some_pes_ready(int row_id, int col_id)
 {
     if (mc_type_ == MC_TYPE_ROW)
     {
@@ -153,7 +153,7 @@ bool MC::issue_ready(int row_id, int col_id)
         }
         for (int i = 0; i < ARRAY_COLUMNS; i++)
         {
-            if (col_mcs_[i]->issue_ready(row_id, col_id) == false)
+            if (col_mcs_[i]->issue_to_some_pes_ready(row_id, col_id) == false)
             {
                 return false;
             }
@@ -171,7 +171,7 @@ bool MC::issue_ready(int row_id, int col_id)
 }
 
 /* issue an instruction to destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-void MC::issue(Instruction *inst, int row_id, int col_id)
+void MC::issue_to_some_pes(Instruction *inst, int row_id, int col_id)
 {
     if (mc_type_ == MC_TYPE_ROW)
     {
@@ -181,7 +181,7 @@ void MC::issue(Instruction *inst, int row_id, int col_id)
         }
         for (int i = 0; i < ARRAY_COLUMNS; i++)
         {
-            col_mcs_[i]->issue(inst, row_id, col_id);
+            col_mcs_[i]->issue_to_some_pes(inst, row_id, col_id);
         }
     }
     else

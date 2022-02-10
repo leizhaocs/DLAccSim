@@ -31,12 +31,19 @@ public:
     /* return true if the instruction queque is empty */
     bool empty();
 
+    /* initialize the traverse */
+    void traverse_init();
+
+    /* get the next instruction in the queue when traversing it */
+    Instruction *traverse_next();
+
 private:
     int num_entries_;               // total capacity of instruction queque
     vector<Instruction *> queue_;   // the queque of instructions
     int size_;                      // current number instructions in instruction queque
     int front_;                     // index of the first instruction
     int end_;                       // index of the next empty instruction slot
+    int curr_;                      // this is used to traverse the instruction queue in 
 };
 
 #endif

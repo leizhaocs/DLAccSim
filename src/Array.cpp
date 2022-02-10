@@ -162,13 +162,13 @@ void Array::multicast(NOC_TYPE noc_type, Packet *p, int row_id, int col_id)
 }
 
 /* check if all destination PEs are ready to accept new ld instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-bool Array::issue_ld_ready(NOC_TYPE noc_type, int row_id, int col_id)
+bool Array::issue_to_some_pes_ready(NOC_TYPE noc_type, int row_id, int col_id)
 {
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            if (row_mcs_ifmap_in_[i]->issue_ready(row_id, col_id) == false)
+            if (row_mcs_ifmap_in_[i]->issue_to_some_pes_ready(row_id, col_id) == false)
             {
                 return false;
             }
@@ -179,7 +179,7 @@ bool Array::issue_ld_ready(NOC_TYPE noc_type, int row_id, int col_id)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            if (row_mcs_filter_in_[i]->issue_ready(row_id, col_id) == false)
+            if (row_mcs_filter_in_[i]->issue_to_some_pes_ready(row_id, col_id) == false)
             {
                 return false;
             }
@@ -190,7 +190,7 @@ bool Array::issue_ld_ready(NOC_TYPE noc_type, int row_id, int col_id)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            if (row_mcs_psum_in_[i]->issue_ready(row_id, col_id) == false)
+            if (row_mcs_psum_in_[i]->issue_to_some_pes_ready(row_id, col_id) == false)
             {
                 return false;
             }
@@ -201,33 +201,33 @@ bool Array::issue_ld_ready(NOC_TYPE noc_type, int row_id, int col_id)
 }
 
 /* issue a new ld instruction to all destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-void Array::issue_ld(NOC_TYPE noc_type, Instruction *inst, int row_id, int col_id)
+void Array::issue_to_some_pes(NOC_TYPE noc_type, Instruction *inst, int row_id, int col_id)
 {
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            row_mcs_ifmap_in_[i]->issue(inst, row_id, col_id);
+            row_mcs_ifmap_in_[i]->issue_to_some_pes(inst, row_id, col_id);
         }
     }
     else if (noc_type == NOC_TYPE_FILTER_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            row_mcs_filter_in_[i]->issue(inst, row_id, col_id);
+            row_mcs_filter_in_[i]->issue_to_some_pes(inst, row_id, col_id);
         }
     }
     else if (noc_type == NOC_TYPE_PSUM_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
         {
-            row_mcs_psum_in_[i]->issue(inst, row_id, col_id);
+            row_mcs_psum_in_[i]->issue_to_some_pes(inst, row_id, col_id);
         }
     }
 }
 
 /* check if all active PEs are ready to accept new compute instruction */
-bool Array::issue_compute_ready()
+bool Array::issue_to_all_pes_ready()
 {
     for (int i = 0; i < ARRAY_ROWS; i++)
     {
@@ -246,7 +246,7 @@ bool Array::issue_compute_ready()
 }
 
 /* issue a new compute instruction to all active PEs */
-void Array::issue_compute(Instruction *inst)
+void Array::issue_to_all_pes(Instruction *inst)
 {
     for (int i = 0; i < ARRAY_ROWS; i++)
     {

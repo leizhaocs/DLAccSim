@@ -346,6 +346,10 @@ bool Chip::tick()
     }
     if (!issued)
     {
+        issued = controller_->issue_pe_acc(array_);
+    }
+    if (!issued)
+    {
         issued = controller_->issue_up(array_);
     }
 

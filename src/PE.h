@@ -87,6 +87,10 @@ private:
     Packet *packet_add_;             // result of addition
     Packet *packet_zero_;            // a packet of PE_DATA_WIDTH bytes of zeros
 
+    int opcode1_;                    // opcode
+    int opcode2_;                    // opcode
+    int opcode3_;                    // opcode
+    int opcode4_;                    // opcode
     int ifmap_read_en_1_;            // ifmap scratchpad read enable
     int ifmap_read_addr_1_;          // ifmap scratchpad read address
     int ifmap_write_en_1_;           // ifmap scratchpad write enable
@@ -105,15 +109,15 @@ private:
     int psum_write_addr_2_;          // psum scratchpad write address
     int psum_write_addr_3_;          // psum scratchpad write address
     int psum_write_addr_4_;          // psum scratchpad write address
-    int add_mux_1_;                  // select between multiplication result and psum input from adjacent PE
-    int add_mux_2_;                  // select between multiplication result and psum input from adjacent PE
-    int add_mux_3_;                  // select between multiplication result and psum input from adjacent PE
-    int psum_read_mux_1_;            // select between data read from psum scratchpad and 0
-    int psum_read_mux_2_;            // select between data read from psum scratchpad and 0
-    int send_psum_out_1_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
-    int send_psum_out_2_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
-    int send_psum_out_3_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
-    int send_psum_out_4_;            // 1: send psum to psum out FIFO; 2: send data from psum out FIFO to above PE's psum in FIFO
+    int add_mux_1_;                  // 0: 0; 1: multiplication results of ifmap and filter; 2: data read from psum in FIFO
+    int add_mux_2_;                  // 0: 0; 1: multiplication results of ifmap and filter; 2: data read from psum in FIFO
+    int add_mux_3_;                  // 0: 0; 1: multiplication results of ifmap and filter; 2: data read from psum in FIFO
+    int psum_read_mux_1_;            // 0: 0; 1: data read from psum scratchpad memory
+    int psum_read_mux_2_;            // 0: 0; 1: data read from psum scratchpad memory
+    int send_psum_out_1_;            // 0: do not save result; 1: write result into psum out FIFO; 2: send data to above PE
+    int send_psum_out_2_;            // 0: do not save result; 1: write result into psum out FIFO; 2: send data to above PE
+    int send_psum_out_3_;            // 0: do not save result; 1: write result into psum out FIFO; 2: send data to above PE
+    int send_psum_out_4_;            // 0: do not save result; 1: write result into psum out FIFO; 2: send data to above PE
 };
 
 #endif

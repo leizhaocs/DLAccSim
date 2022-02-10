@@ -43,8 +43,12 @@ void debug_print_instruction(Instruction *inst)
     {
         cout << "pe.compute" << endl;
     }
-    else if (inst->opcode_ == OP_UP)
+    else if (inst->opcode_ == OP_PE_ACC)
     {
-        cout << "up" << endl;
+        cout << "pe.acc" << endl;
+    }
+    else if (inst->opcode_ == OP_PE_UP)
+    {
+        cout << "pe.up" << endl;
     }
 }

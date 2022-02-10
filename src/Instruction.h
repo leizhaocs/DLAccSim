@@ -71,19 +71,20 @@
  *
  * -----------------------------------------------------------
  *
- * OP_DUMMY
- * | 4 bits | 28 bits |
- * | opcode |    0    |
+ * OP_PE_ACC
+ * | 4 bits |          5 bits        |        5 bits           |
+ * | opcode | psum_spad read address | psum_spad write address |
  *
- * up <psum_read_addr>
+ * pe.acc.o <psum_read_addr>
+ * pe.acc.so <psum_read_addr> <psum_write_addr>
  *
  * -----------------------------------------------------------
  *
- * OP_UP
+ * OP_PE_UP
  * | 4 bits | 28 bits |
  * | opcode |    0    |
  *
- * up <psum_read_addr>
+ * pe.up
  *
  *************************************************************/
 
@@ -98,8 +99,8 @@
 #define OP_PE_LD_PSUM     0x7
 #define OP_PE_ST_PSUM     0x8
 #define OP_PE_COMPUTE     0x9
-#define OP_DUMMY          0xA
-#define OP_UP             0xB
+#define OP_PE_ACC         0xA
+#define OP_PE_UP          0xB
 
 /* a decoded instruction */
 typedef struct Instruction
@@ -130,9 +131,9 @@ typedef struct Instruction
     int psum_read_addr_;        // psum sratchpad memory read address
     int psum_write_en_;         // need to write into psum sratchpad memory
     int psum_write_addr_;       // psum sratchpad memory write address
-    int add_mux_;               // 0: choose multiplication results of ifmap and filter; 1: choose data read from psum fifo in
-    int psum_read_mux_;         // 0: choose 0; 1: choose data read from psum scratchpad memory
-    int send_psum_out_;         // 0: do not write result into psum fifo out; 1: write result into psum fifo out    
+    int add_mux_;               // 0: 0; 1: multiplication results of ifmap and filter; 2: data read from psum in FIFO
+    int psum_read_mux_;         // 0: 0; 1: data read from psum scratchpad memory
+    int send_psum_out_;         // 0: do not save result; 1: write result into psum out FIFO; 2: send data to above PE
 } Instruction;
 
 /* print decoded instruction for debug */

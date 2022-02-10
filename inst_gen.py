@@ -68,8 +68,12 @@ def pe_add_o(f, psum_read_addr):
     f.write("pe.add.o "+str(psum_read_addr)+"\n")
 def pe_add_so(f, psum_read_addr, psum_write_addr):
     f.write("pe.add.so "+str(psum_read_addr)+" "+str(psum_write_addr)+"\n")
-def up(f):
-    f.write("up\n")
+def pe_acc_o(f, psum_read_addr):
+    f.write("pe.acc.o "+str(psum_read_addr)+"\n")
+def pe_acc_so(f, psum_read_addr, psum_write_addr):
+    f.write("pe.acc.so "+str(psum_read_addr)+" "+str(psum_write_addr)+"\n")
+def pe_up(f):
+    f.write("pe.up\n")
 
 f = open("ins.txt", "w")
 
@@ -163,14 +167,16 @@ for nn in range(0, n):
                 if (qq == 0) and (SS == 0):
                     psum_addr = psum_addr + 1
                     pe_mult_s(f, ifmap_read_addr, filter_read_addr, psum_addr)
-                elif (qq == q-1) and (SS == S-1):
-                    pe_madd_so(f, ifmap_read_addr, filter_read_addr, psum_addr, psum_addr)
                 else:
                     pe_madd_s(f, ifmap_read_addr, filter_read_addr, psum_addr, psum_addr)
 
-#
-  
-up(f)
+# accumulate
+
+num_output = n * p
+
+for i in range(0, num_output):
+    pe_acc_so(f, i, num_output+i)
+    pe_up(f)
 
 # some nop at the end to empty pipeline
 

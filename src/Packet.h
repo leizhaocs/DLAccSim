@@ -20,7 +20,10 @@ public:
     void copy(int offset, Packet *p);
 
     /* 0: select p1, 1: select p2 */
-    void select(Packet *p1, Packet *p2, int sel);
+    void mux2(Packet *p1, Packet *p2, int sel);
+
+    /* 0: select p1, 1: select p2, 2: p3 */
+    void mux3(Packet *p1, Packet *p2, Packet *p3, int sel);
 
     /* add p1 and p2 */
     void add(Packet *p1, Packet *p2);

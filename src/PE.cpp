@@ -34,6 +34,10 @@ PE::PE(int row, int col, PE *above_pe)
     packet_add_ = new Packet(PE_DATA_WIDTH);
     packet_zero_ = new Packet(PE_DATA_WIDTH);
 
+    opcode1_ = OP_NOP;
+    opcode2_ = OP_NOP;
+    opcode3_ = OP_NOP;
+    opcode4_ = OP_NOP;
     ifmap_read_en_1_ = 0;
     ifmap_read_addr_1_ = -1;
     ifmap_write_en_1_ = 0;
@@ -152,7 +156,53 @@ FIFO *PE::psum_fifo_out()
 /* check if this PE is ready to accept data from below PE */
 bool PE::can_accept_from_below()
 {
-    return false; // FIXME: check no pe.ld.psum in instQueue before up
+    if (opcode4_ == OP_PE_ACC)
+    {
+        return true;
+    }
+    else if (opcode4_ == OP_PE_LD_PSUM)
+    {
+        return false;
+    }
+    if (opcode3_ == OP_PE_ACC)
+    {
+        return true;
+    }
+    else if (opcode3_ == OP_PE_LD_PSUM)
+    {
+        return false;
+    }
+    if (opcode2_ == OP_PE_ACC)
+    {
+        return true;
+    }
+    else if (opcode2_ == OP_PE_LD_PSUM)
+    {
+        return false;
+    }
+    if (opcode1_ == OP_PE_ACC)
+    {
+        return true;
+    }
+    else if (opcode1_ == OP_PE_LD_PSUM)
+    {
+        return false;
+    }
+    instQueue_->traverse_init();
+    Instruction *inst = instQueue_->traverse_next();
+    while (inst != NULL)
+    {
+        if (inst->opcode_ == OP_PE_ACC)
+        {
+            return true;
+        }
+        else if (inst->opcode_ == OP_PE_LD_PSUM)
+        {
+            return false;
+        }
+        inst = instQueue_->traverse_next();
+    }
+    return false;
 }
 
 /* issue an instruction from the instruction queue */
@@ -160,6 +210,7 @@ void PE::issue_inst()
 {
     if (instQueue_->empty())
     {
+        opcode1_ = OP_NOP;
         ifmap_read_en_1_ = 0;
         ifmap_read_addr_1_ = -1;
         ifmap_write_en_1_ = 0;
@@ -179,21 +230,109 @@ void PE::issue_inst()
     }
 
     Instruction *inst = instQueue_->front();
-    ifmap_read_en_1_ = inst->ifmap_read_en_;
-    ifmap_read_addr_1_ = inst->ifmap_read_addr_;
-    ifmap_write_en_1_ = inst->ifmap_write_en_;
-    ifmap_write_addr_1_ = inst->ifmap_write_addr_;
-    filter_read_en_1_ = inst->filter_read_en_;
-    filter_read_addr_1_ = inst->filter_read_addr_;
-    filter_write_en_1_ = inst->filter_write_en_;
-    filter_write_addr_1_ = inst->filter_write_addr_;
-    psum_read_en_1_ = inst->psum_read_en_;
-    psum_read_addr_1_ = inst->psum_read_addr_;
-    psum_write_en_1_ = inst->psum_write_en_;
-    psum_write_addr_1_ = inst->psum_write_addr_;
-    add_mux_1_ = inst->add_mux_;
-    psum_read_mux_1_ = inst->psum_read_mux_;
-    send_psum_out_1_ = inst->send_psum_out_;
+
+    if (inst->opcode_ == OP_PE_ACC)
+    {
+        if (is_bottom_of_set_)
+        {
+            opcode1_ = inst->opcode_;
+            ifmap_read_en_1_ = inst->ifmap_read_en_;
+            ifmap_read_addr_1_ = inst->ifmap_read_addr_;
+            ifmap_write_en_1_ = inst->ifmap_write_en_;
+            ifmap_write_addr_1_ = inst->ifmap_write_addr_;
+            filter_read_en_1_ = inst->filter_read_en_;
+            filter_read_addr_1_ = inst->filter_read_addr_;
+            filter_write_en_1_ = inst->filter_write_en_;
+            filter_write_addr_1_ = inst->filter_write_addr_;
+            psum_read_en_1_ = inst->psum_read_en_;
+            psum_read_addr_1_ = inst->psum_read_addr_;
+            psum_write_en_1_ = inst->psum_write_en_;
+            psum_write_addr_1_ = inst->psum_write_addr_;
+            add_mux_1_ = 0;
+            psum_read_mux_1_ = inst->psum_read_mux_;
+            send_psum_out_1_ = inst->send_psum_out_;
+        }
+        else
+        {
+            opcode1_ = inst->opcode_;
+            ifmap_read_en_1_ = inst->ifmap_read_en_;
+            ifmap_read_addr_1_ = inst->ifmap_read_addr_;
+            ifmap_write_en_1_ = inst->ifmap_write_en_;
+            ifmap_write_addr_1_ = inst->ifmap_write_addr_;
+            filter_read_en_1_ = inst->filter_read_en_;
+            filter_read_addr_1_ = inst->filter_read_addr_;
+            filter_write_en_1_ = inst->filter_write_en_;
+            filter_write_addr_1_ = inst->filter_write_addr_;
+            psum_read_en_1_ = inst->psum_read_en_;
+            psum_read_addr_1_ = inst->psum_read_addr_;
+            psum_write_en_1_ = inst->psum_write_en_;
+            psum_write_addr_1_ = inst->psum_write_addr_;
+            add_mux_1_ = inst->add_mux_;
+            psum_read_mux_1_ = inst->psum_read_mux_;
+            send_psum_out_1_ = inst->send_psum_out_;
+        }
+    }
+    else if (inst->opcode_ == OP_PE_UP)
+    {
+        if (is_top_of_set_)
+        {
+            opcode1_ = inst->opcode_;
+            ifmap_read_en_1_ = inst->ifmap_read_en_;
+            ifmap_read_addr_1_ = inst->ifmap_read_addr_;
+            ifmap_write_en_1_ = inst->ifmap_write_en_;
+            ifmap_write_addr_1_ = inst->ifmap_write_addr_;
+            filter_read_en_1_ = inst->filter_read_en_;
+            filter_read_addr_1_ = inst->filter_read_addr_;
+            filter_write_en_1_ = inst->filter_write_en_;
+            filter_write_addr_1_ = inst->filter_write_addr_;
+            psum_read_en_1_ = inst->psum_read_en_;
+            psum_read_addr_1_ = inst->psum_read_addr_;
+            psum_write_en_1_ = inst->psum_write_en_;
+            psum_write_addr_1_ = inst->psum_write_addr_;
+            add_mux_1_ = inst->add_mux_;
+            psum_read_mux_1_ = inst->psum_read_mux_;
+            send_psum_out_1_ = 0;
+        }
+        else
+        {
+            opcode1_ = inst->opcode_;
+            ifmap_read_en_1_ = inst->ifmap_read_en_;
+            ifmap_read_addr_1_ = inst->ifmap_read_addr_;
+            ifmap_write_en_1_ = inst->ifmap_write_en_;
+            ifmap_write_addr_1_ = inst->ifmap_write_addr_;
+            filter_read_en_1_ = inst->filter_read_en_;
+            filter_read_addr_1_ = inst->filter_read_addr_;
+            filter_write_en_1_ = inst->filter_write_en_;
+            filter_write_addr_1_ = inst->filter_write_addr_;
+            psum_read_en_1_ = inst->psum_read_en_;
+            psum_read_addr_1_ = inst->psum_read_addr_;
+            psum_write_en_1_ = inst->psum_write_en_;
+            psum_write_addr_1_ = inst->psum_write_addr_;
+            add_mux_1_ = inst->add_mux_;
+            psum_read_mux_1_ = inst->psum_read_mux_;
+            send_psum_out_1_ = inst->send_psum_out_;
+        }
+    }
+    else
+    {
+        opcode1_ = inst->opcode_;
+        ifmap_read_en_1_ = inst->ifmap_read_en_;
+        ifmap_read_addr_1_ = inst->ifmap_read_addr_;
+        ifmap_write_en_1_ = inst->ifmap_write_en_;
+        ifmap_write_addr_1_ = inst->ifmap_write_addr_;
+        filter_read_en_1_ = inst->filter_read_en_;
+        filter_read_addr_1_ = inst->filter_read_addr_;
+        filter_write_en_1_ = inst->filter_write_en_;
+        filter_write_addr_1_ = inst->filter_write_addr_;
+        psum_read_en_1_ = inst->psum_read_en_;
+        psum_read_addr_1_ = inst->psum_read_addr_;
+        psum_write_en_1_ = inst->psum_write_en_;
+        psum_write_addr_1_ = inst->psum_write_addr_;
+        add_mux_1_ = inst->add_mux_;
+        psum_read_mux_1_ = inst->psum_read_mux_;
+        send_psum_out_1_ = inst->send_psum_out_;
+    }
+
     instQueue_->pop();
 }
 
@@ -237,23 +376,25 @@ void PE::tick()
 
     packet_mult2_->mult2(packet_mult1_);
     packet_quant_->quantize(packet_mult2_);
-    if (add_mux_3_ == 1)
+    if (add_mux_3_ == 2)
     {
         if (psum_fifo_in_->empty())
         {
+            opcode4_ = OP_NOP;
             psum_write_en_4_ = 0;
             psum_write_addr_4_ = -1;
             send_psum_out_4_ = 0;
             return;
         }
     }
-    packet_add_mux_->select(packet_quant_, psum_fifo_in_->front(), add_mux_3_);
-    if (add_mux_3_ == 1)
+    packet_add_mux_->mux3(packet_zero_, packet_quant_, psum_fifo_in_->front(), add_mux_3_);
+    if (add_mux_3_ == 2)
     {
         psum_fifo_in_->pop();
     }
     packet_add_->add(packet_add_mux_, packet_psum_read_mux_);
 
+    opcode4_ = opcode3_;
     psum_write_en_4_ = psum_write_en_3_;
     psum_write_addr_4_ = psum_write_addr_3_;
     send_psum_out_4_ = send_psum_out_3_;
@@ -261,8 +402,9 @@ void PE::tick()
     // stage 2: first half of execution, reset accumulation
 
     packet_mult1_->mult1(packet_ifmap_read_, packet_filter_read_);
-    packet_psum_read_mux_->select(packet_zero_, packet_psum_read_, psum_read_mux_2_);
+    packet_psum_read_mux_->mux2(packet_zero_, packet_psum_read_, psum_read_mux_2_);
 
+    opcode3_ = opcode2_;
     psum_write_en_3_ = psum_write_en_2_;
     psum_write_addr_3_ = psum_write_addr_2_;
     add_mux_3_ = add_mux_2_;
@@ -278,6 +420,7 @@ void PE::tick()
     {
         if (ifmap_fifo_in_->empty())
         {
+            opcode2_ = OP_NOP;
             psum_write_en_2_ = 0;
             psum_write_addr_2_ = -1;
             add_mux_2_ = 0;
@@ -299,6 +442,7 @@ void PE::tick()
     {
         if (filter_fifo_in_->empty())
         {
+            opcode2_ = OP_NOP;
             psum_write_en_2_ = 0;
             psum_write_addr_2_ = -1;
             add_mux_2_ = 0;
@@ -316,6 +460,7 @@ void PE::tick()
     {
         if (psum_write_en_2_ && (psum_read_addr_1_ == psum_write_addr_2_))
         {
+            opcode2_ = OP_NOP;
             psum_write_en_2_ = 0;
             psum_write_addr_2_ = -1;
             add_mux_2_ = 0;
@@ -325,6 +470,7 @@ void PE::tick()
         }
         else if (psum_write_en_3_ && (psum_read_addr_1_ == psum_write_addr_3_))
         {
+            opcode2_ = OP_NOP;
             psum_write_en_2_ = 0;
             psum_write_addr_2_ = -1;
             add_mux_2_ = 0;
@@ -342,6 +488,7 @@ void PE::tick()
         }
     }
 
+    opcode2_ = opcode1_;
     psum_write_en_2_ = psum_write_en_1_;
     psum_write_addr_2_ = psum_write_addr_1_;
     add_mux_2_ = add_mux_1_;

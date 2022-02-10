@@ -724,20 +724,27 @@ pe.ld.ifmap 792 1 9 11
 pe.mult.s 0 0 0
 pe.madd.s 4 1 0 0
 pe.madd.s 1 2 0 0
-pe.madd.so 5 3 0 0
+pe.madd.s 5 3 0 0
 pe.mult.s 0 4 1
 pe.madd.s 4 5 1 1
 pe.madd.s 1 6 1 1
-pe.madd.so 5 7 1 1
+pe.madd.s 5 7 1 1
 pe.mult.s 2 0 2
 pe.madd.s 6 1 2 2
 pe.madd.s 3 2 2 2
-pe.madd.so 7 3 2 2
+pe.madd.s 7 3 2 2
 pe.mult.s 2 4 3
 pe.madd.s 6 5 3 3
 pe.madd.s 3 6 3 3
-pe.madd.so 7 7 3 3
-up
+pe.madd.s 7 7 3 3
+pe.acc.so 0 4
+pe.up
+pe.acc.so 1 5
+pe.up
+pe.acc.so 2 6
+pe.up
+pe.acc.so 3 7
+pe.up
 nop
 nop
 nop

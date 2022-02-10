@@ -106,7 +106,7 @@ bool Controller::read_instruction()
         inst.mem_addr_ = regs_[inst.reg_addr_] + (atoi(token) << GB_DATA_WIDTH_LOG2);
         assert(inst.mem_addr_ < MEM_SIZE);
     }
-    else if (strcmp(token, "gb.st.psum") == 0)
+    else if (strcmp(token, "gb.st.psum") == 0) // FIXME
     {
         inst.opcode_ = OP_GB_ST_PSUM;
 
@@ -250,11 +250,11 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 1;
+        inst.add_mux_ = 2;
         inst.psum_read_mux_ = 0;
         inst.send_psum_out_ = 0;
     }
-    else if (strcmp(token, "pe.st.psum") == 0)
+    else if (strcmp(token, "pe.st.psum") == 0) // FIXME
     {
         inst.opcode_ = OP_PE_ST_PSUM;
 
@@ -323,7 +323,7 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 0;
         inst.send_psum_out_ = 0;
     }
@@ -353,7 +353,7 @@ bool Controller::read_instruction()
         inst.psum_write_en_ = 0;
         inst.psum_write_addr_ = -1;
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 0;
         inst.send_psum_out_ = 1;
     }
@@ -385,7 +385,7 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 0;
         inst.send_psum_out_ = 1;
     }
@@ -419,7 +419,7 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 0;
     }
@@ -451,7 +451,7 @@ bool Controller::read_instruction()
         inst.psum_write_en_ = 0;
         inst.psum_write_addr_ = -1;
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 1;
     }
@@ -485,7 +485,7 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 0;
+        inst.add_mux_ = 1;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 1;
     }
@@ -515,7 +515,7 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 1;
+        inst.add_mux_ = 2;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 0;
     }
@@ -543,7 +543,7 @@ bool Controller::read_instruction()
         inst.psum_write_en_ = 0;
         inst.psum_write_addr_ = -1;
 
-        inst.add_mux_ = 1;
+        inst.add_mux_ = 2;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 1;
     }
@@ -573,13 +573,71 @@ bool Controller::read_instruction()
         inst.psum_write_addr_ = atoi(token);
         assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
 
-        inst.add_mux_ = 1;
+        inst.add_mux_ = 2;
         inst.psum_read_mux_ = 1;
         inst.send_psum_out_ = 1;
     }
-    else if (strcmp(token, "up") == 0)
+    else if (strcmp(token, "pe.acc.o") == 0)
     {
-        inst.opcode_ = OP_UP;
+        inst.opcode_ = OP_PE_ACC;
+
+        inst.ifmap_read_en_ = 0;
+        inst.ifmap_read_addr_ = -1;
+
+        inst.ifmap_write_en_ = 0;
+        inst.ifmap_write_addr_ = -1;
+
+        inst.filter_read_en_ = 0;
+        inst.filter_read_addr_ = -1;
+
+        inst.filter_write_en_ = 0;
+        inst.filter_write_addr_ = -1;
+
+        token = strtok(NULL, " ");
+        inst.psum_read_en_ = 1;
+        inst.psum_read_addr_ = atoi(token);
+        assert(inst.psum_read_addr_ < PE_PSUM_SPAD_ENTRIES);
+
+        inst.psum_write_en_ = 0;
+        inst.psum_write_addr_ = -1;
+
+        inst.add_mux_ = 2;
+        inst.psum_read_mux_ = 1;
+        inst.send_psum_out_ = 1;
+    }
+    else if (strcmp(token, "pe.acc.so") == 0)
+    {
+        inst.opcode_ = OP_PE_ACC;
+
+        inst.ifmap_read_en_ = 0;
+        inst.ifmap_read_addr_ = -1;
+
+        inst.ifmap_write_en_ = 0;
+        inst.ifmap_write_addr_ = -1;
+
+        inst.filter_read_en_ = 0;
+        inst.filter_read_addr_ = -1;
+
+        inst.filter_write_en_ = 0;
+        inst.filter_write_addr_ = -1;
+
+        token = strtok(NULL, " ");
+        inst.psum_read_en_ = 1;
+        inst.psum_read_addr_ = atoi(token);
+        assert(inst.psum_read_addr_ < PE_PSUM_SPAD_ENTRIES);
+
+        token = strtok(NULL, " ");
+        inst.psum_write_en_ = 1;
+        inst.psum_write_addr_ = atoi(token);
+        assert(inst.psum_write_addr_ < PE_PSUM_SPAD_ENTRIES);
+
+        inst.add_mux_ = 2;
+        inst.psum_read_mux_ = 1;
+        inst.send_psum_out_ = 1;
+    }
+    else if (strcmp(token, "pe.up") == 0)
+    {
+        inst.opcode_ = OP_PE_UP;
 
         inst.ifmap_read_en_ = 0;
         inst.ifmap_read_addr_ = -1;
@@ -689,7 +747,7 @@ bool Controller::issue_gb_ld(Memory *mem, GB *gb)
 
     return false;
 }
-bool Controller::issue_gb_st(GB *gb)
+bool Controller::issue_gb_st(GB *gb) // FIXME
 {
     if (instQueue_->empty())
     {
@@ -730,7 +788,7 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
             return false;
         }
 
-        if (array->issue_ld_ready(NOC_TYPE_IFMAP_IN, inst->row_id_, inst->col_id_) == false)
+        if (array->issue_to_some_pes_ready(NOC_TYPE_IFMAP_IN, inst->row_id_, inst->col_id_) == false)
         {
             return false;
         }
@@ -741,7 +799,7 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
         p->set_col_id(inst->col_id_);
         array->ifmap_fifo_in()->push(p);
         delete p;
-        array->issue_ld(NOC_TYPE_IFMAP_IN, inst, inst->row_id_, inst->col_id_);
+        array->issue_to_some_pes(NOC_TYPE_IFMAP_IN, inst, inst->row_id_, inst->col_id_);
         instQueue_->pop();
         return true;
     }
@@ -752,7 +810,7 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
             return false;
         }
 
-        if (array->issue_ld_ready(NOC_TYPE_FILTER_IN, inst->row_id_, inst->col_id_) == false)
+        if (array->issue_to_some_pes_ready(NOC_TYPE_FILTER_IN, inst->row_id_, inst->col_id_) == false)
         {
             return false;
         }
@@ -763,7 +821,7 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
         p->set_col_id(inst->col_id_);
         array->filter_fifo_in()->push(p);
         delete p;
-        array->issue_ld(NOC_TYPE_FILTER_IN, inst, inst->row_id_, inst->col_id_);
+        array->issue_to_some_pes(NOC_TYPE_FILTER_IN, inst, inst->row_id_, inst->col_id_);
         instQueue_->pop();
         return true;
     }
@@ -774,7 +832,7 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
             return false;
         }
 
-        if (array->issue_ld_ready(NOC_TYPE_PSUM_IN, inst->row_id_, inst->col_id_) == false)
+        if (array->issue_to_some_pes_ready(NOC_TYPE_PSUM_IN, inst->row_id_, inst->col_id_) == false)
         {
             return false;
         }
@@ -785,14 +843,14 @@ bool Controller::issue_pe_ld(GB *gb, Array *array)
         p->set_col_id(inst->col_id_);
         array->psum_fifo_in()->push(p);
         delete p;
-        array->issue_ld(NOC_TYPE_PSUM_IN, inst, inst->row_id_, inst->col_id_);
+        array->issue_to_some_pes(NOC_TYPE_PSUM_IN, inst, inst->row_id_, inst->col_id_);
         instQueue_->pop();
         return true;
     }
 
     return false;
 }
-bool Controller::issue_pe_st(Array *array)
+bool Controller::issue_pe_st(Array *array) // FIXME
 {
     if (instQueue_->empty())
     {
@@ -835,12 +893,34 @@ bool Controller::issue_pe_compute(Array *array)
     Instruction *inst = instQueue_->front();
     if (inst->opcode_ == OP_PE_COMPUTE)
     {
-        if (array->issue_compute_ready() == false)
+        if (array->issue_to_all_pes_ready() == false)
         {
             return false;
         }
 
-        array->issue_compute(inst);
+        array->issue_to_all_pes(inst);
+        instQueue_->pop();
+        return true;
+    }
+
+    return false;
+}
+bool Controller::issue_pe_acc(Array *array)
+{
+    if (instQueue_->empty())
+    {
+        return false;
+    }
+
+    Instruction *inst = instQueue_->front();
+    if (inst->opcode_ == OP_PE_ACC)
+    {
+        if (array->issue_to_all_pes_ready() == false)
+        {
+            return false;
+        }
+
+        array->issue_to_all_pes(inst);
         instQueue_->pop();
         return true;
     }
@@ -855,14 +935,14 @@ bool Controller::issue_up(Array *array)
     }
 
     Instruction *inst = instQueue_->front();
-    if (inst->opcode_ == OP_UP)
+    if (inst->opcode_ == OP_PE_UP)
     {
-        if (array->issue_compute_ready() == false)
+        if (array->issue_to_all_pes_ready() == false)
         {
             return false;
         }
 
-        array->issue_compute(inst);
+        array->issue_to_all_pes(inst);
         instQueue_->pop();
         return true;
     }

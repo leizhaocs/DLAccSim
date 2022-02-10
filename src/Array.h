@@ -32,16 +32,16 @@ public:
     void multicast(NOC_TYPE noc_type, Packet *p, int row_id, int col_id);
 
     /* check if all destination PEs are ready to accept new ld instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-    bool issue_ld_ready(NOC_TYPE noc_type, int row_id, int col_id);
+    bool issue_to_some_pes_ready(NOC_TYPE noc_type, int row_id, int col_id);
 
     /* issue a new ld instruction to all destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
-    void issue_ld(NOC_TYPE noc_type, Instruction *inst, int row_id, int col_id);
+    void issue_to_some_pes(NOC_TYPE noc_type, Instruction *inst, int row_id, int col_id);
 
     /* check if all active PEs are ready to accept new compute instruction */
-    bool issue_compute_ready();
+    bool issue_to_all_pes_ready();
 
     /* issue a new compute instruction to all active PEs */
-    void issue_compute(Instruction *inst);
+    void issue_to_all_pes(Instruction *inst);
 
     /* print the IDs of MCs for debug */
     void debug_print_noc(NOC_TYPE noc_type);

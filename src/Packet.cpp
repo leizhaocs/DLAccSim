@@ -76,7 +76,7 @@ void Packet::copy(int offset, Packet *p)
 }
 
 /* 0: select p1, 1: select p2 */
-void Packet::select(Packet *p1, Packet *p2, int sel)
+void Packet::mux2(Packet *p1, Packet *p2, int sel)
 {
     if (sel == 0)
     {
@@ -85,6 +85,23 @@ void Packet::select(Packet *p1, Packet *p2, int sel)
     else if (sel == 1)
     {
         copy(p2);
+    }
+}
+
+/* 0: select p1, 1: select p2, 2: p3 */
+void Packet::mux3(Packet *p1, Packet *p2, Packet *p3, int sel)
+{
+    if (sel == 0)
+    {
+        copy(p1);
+    }
+    else if (sel == 1)
+    {
+        copy(p2);
+    }
+    else if (sel == 2)
+    {
+        copy(p3);
     }
 }
 
