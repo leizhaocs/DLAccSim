@@ -43,6 +43,12 @@ public:
     /* issue a new compute instruction to all active PEs */
     void issue_to_all_pes(Instruction *inst);
 
+    /* check if it is ready to collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+    bool collect_from_pe_ready(NOC_TYPE noc_type, int row_id, int col_id);
+
+    /* collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+    void collect_from_pe(NOC_TYPE noc_type, Packet *p, int row_id, int col_id);
+
     /* print the IDs of MCs for debug */
     void debug_print_noc(NOC_TYPE noc_type);
 

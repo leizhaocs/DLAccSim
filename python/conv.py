@@ -3,7 +3,7 @@ import sys
 
 np.set_printoptions(threshold=sys.maxsize)
 
-data = open('../data.txt', 'r')
+data = open('data.txt', 'r')
 
 # load inputs
 

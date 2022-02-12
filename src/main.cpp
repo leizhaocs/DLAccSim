@@ -55,6 +55,8 @@ int main(int argc, char **argv)
     //chip->get_gb()->debug_print_bank(GB_IFMAP, 0);
     cout << "==================" << endl;
     //chip->get_gb()->debug_print_bank(GB_FILTER, 0);
+    cout << "==================" << endl;
+    chip->get_gb()->debug_print_bank(GB_PSUM, 0);
 
     chip->get_gb()->debug_print_fifos();
     chip->get_array()->debug_print_fifos();

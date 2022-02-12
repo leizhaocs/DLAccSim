@@ -70,6 +70,8 @@ PE *MC::get_PE()
 /* check if all destination PEs are ready to accept new data, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 bool MC::multicast_ready(int row_id, int col_id)
 {
+    assert((noc_type_ == NOC_TYPE_IFMAP_IN) || (noc_type_ == NOC_TYPE_FILTER_IN) || (noc_type_ == NOC_TYPE_PSUM_IN));
+
     if (mc_type_ == MC_TYPE_ROW)
     {
         if (row_id != id_)
@@ -108,6 +110,8 @@ bool MC::multicast_ready(int row_id, int col_id)
 /* multicast a packet to destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 void MC::multicast(Packet *p, int row_id, int col_id)
 {
+    assert((noc_type_ == NOC_TYPE_IFMAP_IN) || (noc_type_ == NOC_TYPE_FILTER_IN) || (noc_type_ == NOC_TYPE_PSUM_IN));
+
     if (mc_type_ == MC_TYPE_ROW)
     {
         if (row_id != id_)
@@ -145,6 +149,8 @@ void MC::multicast(Packet *p, int row_id, int col_id)
 /* check if all destination PEs are ready to accept new instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 bool MC::issue_to_some_pes_ready(int row_id, int col_id)
 {
+    assert((noc_type_ == NOC_TYPE_IFMAP_IN) || (noc_type_ == NOC_TYPE_FILTER_IN) || (noc_type_ == NOC_TYPE_PSUM_IN));
+
     if (mc_type_ == MC_TYPE_ROW)
     {
         if (row_id != id_)
@@ -173,6 +179,8 @@ bool MC::issue_to_some_pes_ready(int row_id, int col_id)
 /* issue an instruction to destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 void MC::issue_to_some_pes(Instruction *inst, int row_id, int col_id)
 {
+    assert((noc_type_ == NOC_TYPE_IFMAP_IN) || (noc_type_ == NOC_TYPE_FILTER_IN) || (noc_type_ == NOC_TYPE_PSUM_IN));
+
     if (mc_type_ == MC_TYPE_ROW)
     {
         if (row_id != id_)
@@ -191,5 +199,62 @@ void MC::issue_to_some_pes(Instruction *inst, int row_id, int col_id)
             return;
         }
         pe_->instQueue()->push(inst);
+    }
+}
+
+/* check if it is ready to collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+bool MC::collect_from_pe_ready(int row_id, int col_id)
+{
+    assert(noc_type_ == NOC_TYPE_PSUM_OUT);
+
+    if (mc_type_ == MC_TYPE_ROW)
+    {
+        if (row_id != id_)
+        {
+            return true;
+        }
+        for (int i = 0; i < ARRAY_COLUMNS; i++)
+        {
+            if (col_mcs_[i]->collect_from_pe_ready(row_id, col_id) == false)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        if (col_id != id_)
+        {
+            return true;
+        }
+        return pe_->ready_send_back_to_gb();
+    }
+}
+
+/* collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+void MC::collect_from_pe(Packet *p, int row_id, int col_id)
+{
+    assert(noc_type_ == NOC_TYPE_PSUM_OUT);
+
+    if (mc_type_ == MC_TYPE_ROW)
+    {
+        if (row_id != id_)
+        {
+            return;
+        }
+        for (int i = 0; i < ARRAY_COLUMNS; i++)
+        {
+            col_mcs_[i]->collect_from_pe(p, row_id, col_id);
+        }
+    }
+    else
+    {
+        if (col_id != id_)
+        {
+            return;
+        }
+        p->copy(pe_->psum_fifo_out()->front());
+        pe_->psum_fifo_out()->pop();
     }
 }

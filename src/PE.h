@@ -40,6 +40,9 @@ public:
     FIFO *psum_fifo_in();
     FIFO *psum_fifo_out();
 
+    /* check if this PE is ready to send data back to the global buffer */
+    bool ready_send_back_to_gb();
+
     /* check if this PE is ready to accept data from below PE */
     bool can_accept_from_below();
 

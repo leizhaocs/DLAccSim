@@ -153,6 +153,42 @@ FIFO *PE::psum_fifo_out()
     return psum_fifo_out_;
 }
 
+/* check if this PE is ready to send data back to the global buffer */
+bool PE::ready_send_back_to_gb()
+{
+    if (psum_fifo_out_->empty())
+    {
+        return false;
+    }
+    if (opcode4_ == OP_PE_UP)
+    {
+        return false;
+    }
+    if (opcode3_ == OP_PE_UP)
+    {
+        return false;
+    }
+    if (opcode2_ == OP_PE_UP)
+    {
+        return false;
+    }
+    if (opcode1_ == OP_PE_UP)
+    {
+        return false;
+    }
+    instQueue_->traverse_init();
+    Instruction *inst = instQueue_->traverse_next();
+    while (inst != NULL)
+    {
+        if (inst->opcode_ == OP_PE_UP)
+        {
+            return false;
+        }
+        inst = instQueue_->traverse_next();
+    }
+    return true;
+}
+
 /* check if this PE is ready to accept data from below PE */
 bool PE::can_accept_from_below()
 {

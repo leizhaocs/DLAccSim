@@ -99,6 +99,8 @@ FIFO *Array::psum_fifo_out()
 /* check if all desination PEs are ready to accept new data for a specific NOC, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 bool Array::multicast_ready(NOC_TYPE noc_type, int row_id, int col_id)
 {
+    assert((noc_type == NOC_TYPE_IFMAP_IN) || (noc_type == NOC_TYPE_FILTER_IN) || (noc_type == NOC_TYPE_PSUM_IN));
+
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
@@ -138,6 +140,8 @@ bool Array::multicast_ready(NOC_TYPE noc_type, int row_id, int col_id)
 /* multicast a packet from FIFO to destination PEs through a specific NOC, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 void Array::multicast(NOC_TYPE noc_type, Packet *p, int row_id, int col_id)
 {
+    assert((noc_type == NOC_TYPE_IFMAP_IN) || (noc_type == NOC_TYPE_FILTER_IN) || (noc_type == NOC_TYPE_PSUM_IN));
+
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
@@ -164,6 +168,8 @@ void Array::multicast(NOC_TYPE noc_type, Packet *p, int row_id, int col_id)
 /* check if all destination PEs are ready to accept new ld instruction, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 bool Array::issue_to_some_pes_ready(NOC_TYPE noc_type, int row_id, int col_id)
 {
+    assert((noc_type == NOC_TYPE_IFMAP_IN) || (noc_type == NOC_TYPE_FILTER_IN) || (noc_type == NOC_TYPE_PSUM_IN));
+
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
@@ -203,6 +209,8 @@ bool Array::issue_to_some_pes_ready(NOC_TYPE noc_type, int row_id, int col_id)
 /* issue a new ld instruction to all destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
 void Array::issue_to_some_pes(NOC_TYPE noc_type, Instruction *inst, int row_id, int col_id)
 {
+    assert((noc_type == NOC_TYPE_IFMAP_IN) || (noc_type == NOC_TYPE_FILTER_IN) || (noc_type == NOC_TYPE_PSUM_IN));
+
     if (noc_type == NOC_TYPE_IFMAP_IN)
     {
         for (int i = 0; i < ARRAY_ROWS; i++)
@@ -257,6 +265,32 @@ void Array::issue_to_all_pes(Instruction *inst)
                 pes_[i][j]->instQueue()->push(inst);
             }
         }
+    }
+}
+
+/* check if it is ready to collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+bool Array::collect_from_pe_ready(NOC_TYPE noc_type, int row_id, int col_id)
+{
+    assert(noc_type == NOC_TYPE_PSUM_OUT);
+
+    for (int i = 0; i < ARRAY_ROWS; i++)
+    {
+        if (row_mcs_psum_out_[i]->collect_from_pe_ready(row_id, col_id) == false)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+/* collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+void Array::collect_from_pe(NOC_TYPE noc_type, Packet *p, int row_id, int col_id)
+{
+    assert(noc_type == NOC_TYPE_PSUM_OUT);
+
+    for (int i = 0; i < ARRAY_ROWS; i++)
+    {
+        row_mcs_psum_out_[i]->collect_from_pe(p, row_id, col_id);
     }
 }
 

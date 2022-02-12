@@ -51,7 +51,7 @@
  * pe.ld.ifmap  <global_buffer_read_addr>  <row_id> <col_id> <ifmap_write_addr>
  * pe.ld.filter <global_buffer_read_addr>  <row_id> <col_id> <filter_write_addr>
  * pe.ld.psum   <global_buffer_read_addr>  <row_id> <col_id> <psum_write_addr>
- * pe.st.psum   <global_buffer_write_addr> <row_id> <col_id> <psum_read_addr>
+ * pe.st.psum   <global_buffer_write_addr> <row_id> <col_id>
  *
  * -----------------------------------------------------------
  *

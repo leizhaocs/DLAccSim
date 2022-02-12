@@ -56,6 +56,12 @@ public:
     /* issue an instruction to destination PEs, only used for NOC_TYPE_IFMAP_IN, NOC_TYPE_FILTER_IN and NOC_TYPE_PSUM_IN */
     void issue_to_some_pes(Instruction *inst, int row_id, int col_id);
 
+    /* check if it is ready to collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+    bool collect_from_pe_ready(int row_id, int col_id);
+
+    /* collect data from a specific PE, only used for NOC_TYPE_PSUM_OUT */
+    void collect_from_pe(Packet *p, int row_id, int col_id);
+
 private:
     NOC_TYPE noc_type_;     // type of NOC
     MC_TYPE mc_type_;       // row MC or column MC

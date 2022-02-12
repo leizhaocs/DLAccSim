@@ -25,6 +25,9 @@ M = 4
 R = 2
 S = 2
 
+E = H - (R - 1)
+F = W - (S - 1)
+
 n = 2;  # n inputs can be put in the same PE
 q = 2;  # q channles can be put in the same PE
 p = 2;  # p filters can be put in the same PE
@@ -48,8 +51,8 @@ def pe_ld_filter(f, global_buffer_read_addr, row_id, col_id, filter_write_addr):
     f.write("pe.ld.filter "+str(global_buffer_read_addr)+" "+str(row_id)+" "+str(col_id)+" "+str(filter_write_addr)+"\n")
 def pe_ld_psum(f, global_buffer_read_addr, row_id, col_id, psum_write_addr):
     f.write("pe.ld.psum "+str(global_buffer_read_addr)+" "+str(row_id)+" "+str(col_id)+" "+str(psum_write_addr)+"\n")
-def pe_st_psum(f, global_buffer_write_addr, row_id, col_id, psum_read_addr):
-    f.write("pe.st.psum "+str(global_buffer_write_addr)+" "+str(row_id)+" "+str(col_id)+" "+str(psum_read_addr)+"\n")
+def pe_st_psum(f, global_buffer_write_addr, row_id, col_id):
+    f.write("pe.st.psum "+str(global_buffer_write_addr)+" "+str(row_id)+" "+str(col_id)+"\n")
 def pe_mult_s(f, ifmap_read_addr, filter_read_addr, psum_write_addr):
     f.write("pe.mult.s "+str(ifmap_read_addr)+" "+str(filter_read_addr)+" "+str(psum_write_addr)+"\n")
 def pe_mult_o(f, ifmap_read_addr, filter_read_addr):
@@ -177,6 +180,22 @@ num_output = n * p
 for i in range(0, num_output):
     pe_acc_so(f, i, num_output+i)
     pe_up(f)
+
+# send data back to global buffer
+
+num_row_ids = t
+num_col_ids = E
+
+for i in range(0, num_row_ids):
+    for j in range(0, num_col_ids):
+        for k in range(0, n):
+            for l in range(0, p):
+                out = k
+                channel = i * p + l
+                height = j
+                width = 0
+                addr = out*M*E*F + channel*E*F + height*F + width
+                pe_st_psum(f, addr, i, j)
 
 # some nop at the end to empty pipeline
 

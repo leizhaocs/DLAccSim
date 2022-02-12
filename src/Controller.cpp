@@ -865,18 +865,19 @@ bool Controller::issue_pe_st(Array *array) // FIXME
             return false;
         }
 
-        if (array->get_PE(inst->row_id_, inst->col_id_)->psum_fifo_out()->empty())
+        if (array->collect_from_pe_ready(NOC_TYPE_PSUM_OUT, inst->row_id_, inst->col_id_) == false)
         {
             return false;
         }
 
-        Packet *p = array->get_PE(inst->row_id_, inst->col_id_)->psum_fifo_out()->front();
+        Packet *p = new Packet(PE_DATA_WIDTH);
+        array->collect_from_pe(NOC_TYPE_PSUM_OUT, p, inst->row_id_, inst->col_id_);
         array->psum_fifo_out()->push(p);
         array->psum_fifo_out()->end()->set_gb_region(inst->gb_region_);
         array->psum_fifo_out()->end()->set_gb_bank(inst->gb_bank_);
         array->psum_fifo_out()->end()->set_gb_entry(inst->gb_entry_);
         array->psum_fifo_out()->end()->set_gb_offset(inst->gb_offset_);
-        array->get_PE(inst->row_id_, inst->col_id_)->psum_fifo_out()->pop();
+        delete p;
         instQueue_->pop();
         return true;
     }
