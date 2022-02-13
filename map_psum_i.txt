@@ -21,6 +21,16 @@ The filter has a dimemsion of (M,C,R,S) = (4,4,2,2).
 
 The first number before the = sign of each line is called the row ID.
 The numbers after the = sign is called the column IDs.
-We call the PEs that has the same row ID as a group.
-So the first group contains the first 4 rows, and the second group contains the second 4 rows.
-Within each group, only the PEs in the lower-most row have non -1 column IDs, indicating these PEs will accept data from global buffer.
+There must not be multiple PEs with the same row ID and column ID.
+Each different column ID actually indicates a different row in the output.
+Each different row ID actually indicates a different channel and output.
+
+The column ID is easy to understand, what needs more explanation is the row ID.
+Each different row ID is determined by the combination of channel and output.
+For example, because each PE is configured to store data from 2 different filters and 2 different inputs,
+row ID 0 indicates this row of PEs will store the first 2 channels (M=0,1) of the the first 2 output (N=0,1).
+row ID 1 indicates this row of PEs will store the second 2 channels (M=2,3) of the the first 2 output (N=0,1).
+row ID 2 indicates this row of PEs will store the first 2 channels (M=0,1) of the the second 2 output (N=2,3).
+row ID 3 indicates this row of PEs will store the second 2 channels (M=2,3) of the the second 2 output (N=2,3).
+
+Not that, in this example, because there are no space for the second 2 inputs, so there is no row ID 2 and 3 in this example.

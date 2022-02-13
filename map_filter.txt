@@ -24,6 +24,7 @@ The numbers after the = sign is called the column IDs.
 The PEs with the same row ID and column ID will receive the same filter data at any time.
 Each different column ID actually indicates a different row in the filter.
 Each different row ID actually indicates a different channel and filter.
+
 The column ID is easy to understand, what needs more explanation is the row ID.
 Each different row ID is determined by the combination of channel and filter.
 For example, because each PE is configured to store data from 2 different channels and 2 different filters,

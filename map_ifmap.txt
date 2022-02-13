@@ -23,14 +23,19 @@ The first number before the = sign of each line is called the row ID.
 The numbers after the = sign is called the column IDs.
 The PEs with the same row ID and column ID will receive the same input data at any time.
 Each different column ID actually indicates a different row in the input.
-Each different row ID actually indicates a different channel in the input.
+Each different row ID actually indicates a different channel and input.
+
+The column ID is easy to understand, what needs more explanation is the row ID.
+Each different row ID is determined by the combination of channel and input.
+For example, because each PE is configured to store data from 2 different channels and 2 different inputs,
+row ID 0 indicates this row of PEs will store the first 2 channels (C=0,1) of the the first 2 inputs (N=0,1).
+row ID 1 indicates this row of PEs will store the second 2 channels (C=2,3) of the the first 2 inputs (N=0,1).
+row ID 2 indicates this row of PEs will store the first 2 channels (C=0,1) of the the second 2 inputs (N=2,3).
+row ID 3 indicates this row of PEs will store the second 2 channels (C=2,3) of the the second 2 inputs (N=2,3).
+
 From the above example we can see that rows 5-6 are a replicate of rows 1-4.
-We call each 4 rows in the above example as a group.
-These two groups will store exactly the same input data (N=0,1 because the PE is configure to store 2 inputs).
-Note in this example only the first 2 inputs are processed.
-The reason why we need two groups for the same input data is because their filter data are different.
+The reason why we need these two replicates is because of the filters.
 After understand map_filter.txt, this may be more clear.
-So, next we only focus on one group.
-Each PE can store 2 channels data (configured in the code), so each group only has 2 different row IDs.
-For example, the PEs with row ID equals 0 will store the first 2 channels (C=0,1), and the PEs with row ID equals 1 will store the next 2 channels (C=2,4).
-Because the filter height is 2 (R=2), so within a group there are 2 rows have the same row ID.
+In the filter NOC, we need 8 rows to store all the filters (rows 1-4 store the first 2 filters, rows 5-6 stores the second 2 filters).
+So, we actually need another 8 rows to store the next 2 inputs.
+However, there are not enough rows, so in this example we only calculate the first inputs.
